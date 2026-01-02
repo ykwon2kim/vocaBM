@@ -6,161 +6,72 @@
 <title>뽀둥이 단어장</title>
 <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
 <style>
-  body { font-family: 'Jua', sans-serif; background-color: #fff0f5; /* 배경을 연한 핑크로 변경 */ text-align: center; margin: 0; padding: 20px; color: #333; }
-  
+  body { font-family: 'Jua', sans-serif; background-color: #fff0f5; text-align: center; margin: 0; padding: 20px; color: #333; }
   .screen { display: none; max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
   .active { display: block; }
-
-  /* 버튼 스타일 */
   .btn { border: none; padding: 10px 20px; border-radius: 15px; cursor: pointer; font-family: 'Jua', sans-serif; font-size: 16px; margin: 5px; transition: 0.2s; }
   .btn:hover { transform: scale(1.05); }
-  .btn-primary { background: #ff9a9e; color: white; width: 100%; font-size: 20px; padding: 15px; } /* 메인 버튼 핑크색 */
+  .btn-primary { background: #ff9a9e; color: white; width: 100%; font-size: 20px; padding: 15px; }
   .btn-danger { background: #ff6b6b; color: white; }
   .btn-secondary { background: #a8d8ea; color: white; }
   .btn-dark { background: #555; color: white; font-size: 14px; }
-  .btn-purple { background: #aa96da; color: white; font-size: 14px; }
-  .btn-edit { background: #fce38a; color: #555; font-size: 14px; }
-
-  /* 목록 스타일 */
-  .list-item { 
-    background: #fff5f8; border: 2px solid #ffc3c3; 
-    padding: 15px; margin-bottom: 10px; border-radius: 15px;
-    display: flex; justify-content: space-between; align-items: center; text-align: left;
-  }
+  .list-item { background: #fff5f8; border: 2px solid #ffc3c3; padding: 15px; margin-bottom: 10px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; text-align: left; }
   .list-info { cursor: pointer; flex-grow: 1; }
   .list-title { font-size: 20px; color: #ff6b6b; font-weight: bold; }
   .list-desc { font-size: 13px; color: #888; }
-  .btn-group { display: flex; gap: 5px; }
-
-  /* 입력창 */
   input[type="text"], textarea { width: 90%; padding: 12px; border: 2px solid #ffc3c3; border-radius: 10px; font-size: 16px; margin-top: 5px; font-family: sans-serif; }
   textarea { height: 100px; }
-  
-  /* 데이터 이동 영역 */
-  .data-area { margin-top: 30px; border-top: 2px dashed #ddd; padding-top: 20px; }
-  #dataInput { display: none; margin-bottom: 10px; border: 2px solid #aa96da; }
-
-  /* 메뉴 버튼 */
   .menu-bar { margin-bottom: 20px; }
   .menu-row { display: flex; justify-content: center; gap: 10px; margin-bottom: 10px; }
-  .mode-btn { 
-    flex: 1; 
-    padding: 12px; border-radius: 15px; border: 2px solid #ddd; 
-    cursor: pointer; font-family: 'Jua', sans-serif; font-size: 16px; 
-    background: #fff; color: #555; 
-  }
+  .mode-btn { flex: 1; padding: 12px; border-radius: 15px; border: 2px solid #ddd; cursor: pointer; font-family: 'Jua', sans-serif; font-size: 16px; background: #fff; color: #555; }
   .mode-btn.selected { background: #ff9a9e; color: white; font-weight: bold; border-color: #ff9a9e; box-shadow: 0 4px 10px rgba(255,154,158,0.4); }
-
-  /* 카드 스타일 */
   .status-bar { font-size: 18px; color: #666; margin-bottom: 10px; }
-  
-  .card-container { 
-    perspective: 1000px; 
-    width: 100%; 
-    height: 380px; 
-    margin: 10px auto; 
-    cursor: pointer; 
-  }
+  .card-container { perspective: 1000px; width: 100%; height: 380px; margin: 10px auto; cursor: pointer; }
   .card { width: 100%; height: 100%; position: relative; transition: transform 0.6s; transform-style: preserve-3d; }
   .card.is-flipped { transform: rotateY(180deg); }
-  
-  .card-face { 
-    position: absolute; width: 100%; height: 100%; backface-visibility: hidden; 
-    display: flex; flex-direction: column; align-items: center; justify-content: center; 
-    gap: 15px;
-    border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); 
-    border: 4px solid #ff9a9e; background: white; 
-    padding: 20px; box-sizing: border-box; 
-  }
-  
-  .card-text-main { font-size: 30px; color: #333; word-break: keep-all; line-height: 1.4; font-weight: bold; }
-  .card-text-sub { 
-    font-size: 20px; 
-    color: #ff6b6b; 
-    background-color: #fff0f5; 
-    border-radius: 10px;
-    padding: 10px;
-    margin-top: 10px; 
-    font-weight: bold; 
-    display: block; 
-    width: 90%; 
-    box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
-  }
-  
+  .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border: 4px solid #ff9a9e; background: white; padding: 20px; box-sizing: border-box; }
+  .card-text-main { font-size: 32px; color: #333; word-break: keep-all; line-height: 1.4; font-weight: bold; }
+  .card-text-sub { font-size: 20px; color: #ff6b6b; background-color: #fff0f5; border-radius: 10px; padding: 10px; margin-top: 10px; font-weight: bold; display: block; width: 90%; box-shadow: inset 0 0 5px rgba(0,0,0,0.05); }
   .card-back { transform: rotateY(180deg); background-color: #ff9a9e; color: white; }
   .card-back .card-text-main { color: white; font-size: 36px; }
-
-  /* 퀴즈 스타일 */
   .quiz-q { font-size: 22px; margin: 20px 0; font-weight: bold; word-break: keep-all; line-height: 1.5; }
   .quiz-input { width: 70%; padding: 10px; font-size: 20px; border: 3px solid #ff6b6b; border-radius: 10px; text-align: center; }
   .quiz-msg { height: 30px; margin: 10px 0; font-size: 18px; font-weight: bold; }
-  
-  /* 결과창 */
   .result-box { display: none; background: #fff3e0; padding: 20px; border-radius: 15px; margin-top: 20px; border: 2px dashed #ff9800; }
-  
-  /* 스피커 버튼 */
-  .speak-btn { 
-    background: #f9f9f9; border: 2px solid #ddd; border-radius: 50%; 
-    width: 55px; height: 55px; 
-    cursor: pointer; font-size: 28px; 
-    transition: 0.2s; display: inline-flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
+  .speak-btn { background: #f9f9f9; border: 2px solid #ddd; border-radius: 50%; width: 55px; height: 55px; cursor: pointer; font-size: 28px; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; z-index: 10; }
   .speak-btn:hover { transform: scale(1.1); background: #eee; }
-
-  /* O, X 버튼 */
   .ox-btn { width: 70px; height: 70px; border-radius: 50%; font-size: 30px; border: none; cursor: pointer; margin: 0 10px; box-shadow: 0 4px 0 rgba(0,0,0,0.1); }
   .ox-btn:active { transform: translateY(4px); box-shadow: none; }
   .btn-o { background: #a8e6cf; color: #2e7d32; }
   .btn-x { background: #ff8b94; color: #c62828; }
-
 </style>
 </head>
 <body>
 
-  <!-- 1. 서재 화면 -->
   <div id="screen-list" class="screen active">
     <h1>🐶 뽀둥이 단어장</h1>
     <div id="saved-list-container"></div>
-    <div id="empty-msg" style="color:#aaa; margin:50px 0;">아직 단어장이 없어요.<br>뽀둥이와 함께 공부를 시작해봐요!</div>
-    <button class="btn btn-primary" onclick="showInputScreen()">+ 단어장 새로 만들기</button>
-
-    <div class="data-area">
-        <p style="font-size:14px; color:#666;">컴퓨터 ↔ 핸드폰 데이터 이동</p>
-        <button class="btn btn-purple" onclick="exportData()">📤 내보내기</button>
-        <button class="btn btn-purple" onclick="toggleImport()">📥 가져오기</button>
-        <div id="import-area" style="display:none; margin-top:10px;">
-            <textarea id="dataInput" style="display:block; height:60px;" placeholder="코드를 여기에 붙여넣으세요"></textarea>
-            <button class="btn btn-dark" onclick="importData()">확인 (덮어쓰기)</button>
-        </div>
-    </div>
+    <div style="margin-top:20px; color:#666; font-size:14px;">* 데이터 수정 시 자동 갱신 *</div>
   </div>
 
-  <!-- 2. 입력 화면 -->
   <div id="screen-input" class="screen">
     <h2 id="input-title">✨ 내용 채우기</h2>
-    <input type="text" id="listTitle" placeholder="제목 (예: Day 17)">
-    
+    <input type="text" id="listTitle" placeholder="제목">
     <label style="display:block; text-align:left; margin-top:10px; font-weight:bold; color:#ff6b6b;">1. 단어 리스트</label>
-    <textarea id="inputWords" placeholder="apple 사과&#10;busy 바쁜"></textarea>
-
+    <textarea id="inputWords"></textarea>
     <label style="display:block; text-align:left; margin-top:10px; font-weight:bold; color:#ff6b6b;">2. 예문 빈칸 문제</label>
-    <textarea id="inputSentences" placeholder="apple  (나는 사과를 먹었다) I ate an [ ____ ]."></textarea>
-    
+    <textarea id="inputSentences"></textarea>
     <div style="margin-top:20px;">
       <button class="btn btn-secondary" onclick="showListScreen()">취소</button>
       <button class="btn btn-primary" style="width:auto;" onclick="saveAndStart()">저장하고 시작 🚀</button>
     </div>
   </div>
 
-  <!-- 3. 공부 화면 -->
   <div id="screen-study" class="screen">
     <div style="display:flex; justify-content:space-between; align-items:center;">
       <button class="btn btn-secondary" style="font-size:14px;" onclick="showListScreen()">🏠 서재로</button>
       <span id="study-title" style="font-weight:bold; color:#ff6b6b;">Title</span>
     </div>
-
-    <!-- 메뉴 버튼 -->
     <div class="menu-bar">
         <div class="menu-row">
             <button class="mode-btn selected" id="m1" onclick="changeMode(1)">단어 카드</button>
@@ -171,21 +82,21 @@
             <button class="mode-btn" id="m4" onclick="changeMode(4)">예문 퀴즈</button>
         </div>
     </div>
-
     <div id="study-container">
         <div class="status-bar" id="status-display">1 / 10</div>
-
-        <!-- 카드 영역 -->
+        
         <div id="card-area" style="display:block;">
             <div class="card-container" onclick="flipCard()">
                 <div class="card" id="flashcard">
                     <div class="card-face card-front">
                         <div id="card-front-content" style="width:100%;"></div> 
-                        <button class="speak-btn" id="btn-speak-front" onclick="playCurrentAudio(event)">🔊</button>
+                        <!-- 앞면 스피커 버튼 -->
+                        <div id="btn-speak-front" class="speak-btn" onclick="playCurrentAudio(event)">🔊</div>
                     </div>
                     <div class="card-face card-back">
                         <div id="card-back-content" style="width:100%;"></div> 
-                        <button class="speak-btn" style="color:#333;" onclick="playCurrentAudio(event)">🔊</button>
+                        <!-- 뒷면 스피커 버튼 -->
+                        <div class="speak-btn" style="color:#333;" onclick="playCurrentAudio(event)">🔊</div>
                     </div>
                 </div>
             </div>
@@ -195,7 +106,6 @@
             </div>
         </div>
 
-        <!-- 퀴즈 영역 -->
         <div id="quiz-area" style="display:none;">
             <div id="quiz-question" class="quiz-q">문제</div>
             <input type="text" id="quiz-input" class="quiz-input" placeholder="정답 입력" autocomplete="off" onkeyup="if(window.event.keyCode==13){checkAnswer()}">
@@ -204,7 +114,6 @@
             <button class="btn btn-dark" style="display:none;" id="btn-next" onclick="nextItem()">다음 ▶</button>
         </div>
 
-        <!-- 결과 및 재시도 -->
         <div id="result-box" class="result-box">
             <h3 id="result-msg">결과</h3>
             <button class="btn btn-danger" id="btn-retry" onclick="retryWrong()">🔥 틀린 것만 다시 하기</button>
@@ -218,7 +127,77 @@
   </div>
 
 <script>
-  let library = JSON.parse(localStorage.getItem('mySmartVocab') || '[]');
+  // ==========================================
+  // 👇 1. 데이터 저장소 (손흥민 삭제됨)
+  // ==========================================
+  const defaultData = [
+    {
+      title: "Day 17 (0321~0340)",
+      words: [
+        {q:"바쁜, 혼잡한", a:"busy"}, {q:"일찍, 빨리", a:"early"}, {q:"음식, 식량", a:"food"}, {q:"거의", a:"almost"},
+        {q:"가져오다", a:"bring"}, {q:"그리다, 끌다", a:"draw"}, {q:"가로지르다", a:"cross"}, {q:"~위에, ~넘는", a:"over"},
+        {q:"노래하다", a:"sing"}, {q:"의사", a:"doctor"}, {q:"특별한", a:"special"}, {q:"약한", a:"weak"},
+        {q:"계단", a:"stair"}, {q:"어느 것", a:"which"}, {q:"길, 도로", a:"road"}, {q:"부엌", a:"kitchen"},
+        {q:"간식", a:"snack"}, {q:"한 쌍, 켤레", a:"pair"}, {q:"요즘", a:"these days"}, {q:"이해하다", a:"get it"}
+      ],
+      sentences: [
+        {q:"busy (나는 지금 매우 바쁘다) I am very [ ______ ] now.", a:"busy"},
+        {q:"early (그는 오늘 일찍 일어났다) He got up [ ______ ] today.", a:"early"},
+        {q:"food (우리는 음식이 좀 필요하다) We need some [ ______ ].", a:"food"},
+        {q:"almost (거의 12시다) It's [ ______ ] 12 o'clock.", a:"almost"},
+        {q:"bring (내일 네 숙제를 가져와라) Please [ ______ ] your homework tomorrow.", a:"bring"},
+        {q:"draw (원을 하나 그려라) [ ______ ] a circle.", a:"draw"},
+        {q:"cross (길을 건너지 마라) Don't [ ______ ] the street.", a:"cross"},
+        {q:"over (그 개는 담장을 넘어 점프했다) The dog jumped [ ______ ] the fence.", a:"over"},
+        {q:"sang (그들은 방과 후에 노래했다) They [ ______ ] after school.", a:"sang"},
+        {q:"doctor (의사는 물을 마시라고 했다) The [ ______ ] told me to drink water.", a:"doctor"},
+        {q:"special (특별 메뉴가 있나요?) Do you have a [ ______ ] menu?", a:"special"},
+        {q:"weak (할머니는 다리가 약하시다) My grandmother has [ ______ ] legs.", a:"weak"},
+        {q:"stairs (그는 계단을 올라갔다) He went up the [ ______ ].", a:"stairs"},
+        {q:"Which (어떤 것이 네 책이니?) [ ______ ] is your book?", a:"Which"},
+        {q:"road (도로에 차들이 많다) There are a lot of cars on the [ ______ ].", a:"road"},
+        {q:"kitchen (그녀는 부엌에서 요리중이다) She is cooking in the [ ______ ].", a:"kitchen"},
+        {q:"snack (나는 간식으로 초콜릿을 좋아한다) I like chocolate for a [ ______ ].", a:"snack"},
+        {q:"pair (그녀는 새 안경 하나를 샀다) She bought a new [ ______ ] of glasses.", a:"pair"},
+        {q:"these days (요즘 날씨가 좋다) The weather is nice [ ______ ] [ ______ ].", a:"these days"},
+        {q:"get it (저는 이해를 못하겠어요) I don't [ ______ ] [ ______ ].", a:"get it"}
+      ]
+    },
+    {
+      title: "Day 18 (0341~0360)",
+      words: [
+        {q:"병, 한 병", a:"bottle"}, {q:"시계", a:"clock"}, {q:"꿈, 꿈꾸다", a:"dream"}, {q:"완전한, 완료하다", a:"complete"},
+        {q:"계절", a:"season"}, {q:"죽다", a:"die"}, {q:"가게", a:"store"}, {q:"떨어져, 멀리", a:"off"},
+        {q:"팔다", a:"sell"}, {q:"입", a:"mouth"}, {q:"장갑", a:"glove"}, {q:"접시", a:"dish"},
+        {q:"심장, 마음", a:"heart"}, {q:"그림, 사진", a:"picture"}, {q:"잎, 나뭇잎", a:"leaf"}, {q:"병원", a:"hospital"},
+        {q:"다리", a:"bridge"}, {q:"유용한", a:"useful"}, {q:"진찰받다", a:"see a doctor"}, {q:"집다, 태우다", a:"pick up"}
+      ],
+      sentences: [
+        {q:"bottle (이 병 좀 열어주시겠어요?) Would you open this [ ______ ]?", a:"bottle"},
+        {q:"clock (이 시계는 5분 빠르다) This [ ______ ] is five minutes fast.", a:"clock"},
+        {q:"dream (그는 악몽을 꾸었다) He had a bad [ ______ ].", a:"dream"},
+        {q:"complete (우리는 일을 완료해야 한다) We should [ ______ ] the work.", a:"complete"},
+        {q:"season (어떤 계절을 좋아하니?) Which [ ______ ] do you like?", a:"season"},
+        {q:"died (그 개는 작년에 죽었다) The dog [ ______ ] last year.", a:"died"},
+        {q:"store (가게에서 달걀을 사라) Buy eggs at the [ ______ ].", a:"store"},
+        {q:"off (그는 말에서 떨어졌다) He fell [ ______ ] the horse.", a:"off"},
+        {q:"sells (이 가게는 모자를 판다) This store [ ______ ] caps.", a:"sells"},
+        {q:"mouth (입을 벌려라) Open your [ ______ ].", a:"mouth"},
+        {q:"gloves (나는 장갑을 꼈다) I put on [ ______ ].", a:"gloves"},
+        {q:"dish (그녀는 접시를 샀다) She bought a [ ______ ].", a:"dish"},
+        {q:"heart (그는 심장이 약하다) He has a weak [ ______ ].", a:"heart"},
+        {q:"picture (나는 그림을 그리고 있다) I'm drawing a [ ______ ].", a:"picture"},
+        {q:"Leaves (나뭇잎들이 빨갛다) [ ______ ] are red.", a:"Leaves"},
+        {q:"hospital (병원에 아픈 아이들이 많다) Many sick children at the [ ______ ].", a:"hospital"},
+        {q:"bridge (나는 다리를 건넜다) I crossed the [ ______ ].", a:"bridge"},
+        {q:"useful (이 수업은 유용할 것이다) This class will be [ ______ ].", a:"useful"},
+        {q:"see a doctor (너는 병원에 가야해) You should [ ______ ] [ ______ ] [ ______ ].", a:"see a doctor"},
+        {q:"picked up (그녀는 책을 집었다) She [ ______ ] [ ______ ] a book.", a:"picked up"}
+      ]
+    }
+  ];
+
+  let library = defaultData; 
   let currentSet = {};
   let studyList = [];
   let wrongList = [];
@@ -229,65 +208,34 @@
   function init() { renderLibrary(); }
   function renderLibrary() {
     const con = document.getElementById('saved-list-container');
-    const empty = document.getElementById('empty-msg');
     con.innerHTML = "";
-    if(library.length === 0) empty.style.display = 'block';
-    else {
-        empty.style.display = 'none';
-        library.forEach((item, idx) => {
-            const div = document.createElement('div');
-            div.className = 'list-item';
-            div.innerHTML = `
-                <div class="list-info" onclick="openStudy(${idx})">
-                    <div class="list-title">${item.title}</div>
-                    <div class="list-desc">단어 ${item.words.length}개 / 예문 ${item.sentences.length}개</div>
-                </div>
-                <div class="btn-group">
-                    <button class="btn btn-edit" style="padding:5px 10px;" onclick="editItem(${idx})">수정</button>
-                    <button class="btn btn-danger" style="font-size:12px; padding:5px 10px;" onclick="delItem(${idx})">삭제</button>
-                </div>
-            `;
-            con.appendChild(div);
-        });
-    }
+    library.forEach((item, idx) => {
+        const div = document.createElement('div');
+        div.className = 'list-item';
+        div.innerHTML = `
+            <div class="list-info" onclick="openStudy(${idx})">
+                <div class="list-title">${item.title}</div>
+                <div class="list-desc">단어 ${item.words.length}개 / 예문 ${item.sentences.length}개</div>
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-edit" style="padding:5px 10px;" onclick="editItem(${idx})">수정</button>
+                <button class="btn btn-danger" style="font-size:12px; padding:5px 10px;" onclick="delItem(${idx})">삭제</button>
+            </div>
+        `;
+        con.appendChild(div);
+    });
   }
-  function delItem(idx) { if(confirm("정말 삭제하시겠습니까?")) { library.splice(idx, 1); saveLib(); renderLibrary(); } }
-  function saveLib() { localStorage.setItem('mySmartVocab', JSON.stringify(library)); }
-  function exportData() {
-    if(library.length === 0) { alert("데이터가 없습니다."); return; }
-    const dataStr = JSON.stringify(library);
-    navigator.clipboard.writeText(dataStr).then(() => { alert("복사 완료! 카톡으로 보내세요."); }).catch(() => prompt("코드 복사:", dataStr));
-  }
-  function toggleImport() { const el = document.getElementById('import-area'); el.style.display = (el.style.display==='none'?'block':'none'); }
-  function importData() {
-    try {
-        const data = JSON.parse(document.getElementById('dataInput').value.trim());
-        if(confirm("기존 데이터가 덮어씌워집니다.")) { library = data; saveLib(); renderLibrary(); alert("완료!"); }
-    } catch(e) { alert("코드가 잘못되었습니다."); }
-  }
+  function delItem(idx) { if(confirm("정말 삭제하시겠습니까?")) { library.splice(idx, 1); renderLibrary(); } }
 
-  function showInputScreen() { 
-    showScreen('screen-input'); 
-    editingIndex = -1; 
-    document.getElementById('input-title').innerText = "✨ 새 단어장 만들기";
-    document.getElementById('listTitle').value = ""; 
-    document.getElementById('inputWords').value = ""; 
-    document.getElementById('inputSentences').value = ""; 
-  }
-
+  // === 입력/수정 로직 ===
+  function showInputScreen() { showScreen('screen-input'); editingIndex = -1; document.getElementById('input-title').innerText = "✨ 새 단어장 만들기"; document.getElementById('listTitle').value = ""; document.getElementById('inputWords').value = ""; document.getElementById('inputSentences').value = ""; }
   function editItem(idx) {
-    showScreen('screen-input');
-    editingIndex = idx;
-    document.getElementById('input-title').innerText = "✏️ 단어장 수정하기";
-    
+    showScreen('screen-input'); editingIndex = idx; document.getElementById('input-title').innerText = "✏️ 단어장 수정하기";
     const item = library[idx];
     document.getElementById('listTitle').value = item.title;
-    const wText = item.words.map(w => `${w.a}\t${w.q}`).join('\n');
-    const sText = item.sentences.map(s => `${s.a}\t${s.q}`).join('\n');
-    document.getElementById('inputWords').value = wText;
-    document.getElementById('inputSentences').value = sText;
+    document.getElementById('inputWords').value = item.words.map(w => `${w.a}\t${w.q}`).join('\n');
+    document.getElementById('inputSentences').value = item.sentences.map(s => `${s.a}\t${s.q}`).join('\n');
   }
-
   function saveAndStart() {
     const title = document.getElementById('listTitle').value.trim();
     const wText = document.getElementById('inputWords').value.trim();
@@ -295,13 +243,10 @@
     if(!title) return alert("제목을 입력하세요!");
     const words = parseText(wText);
     const sentences = parseText(sText);
-    if(words.length === 0 && sentences.length === 0) return alert("내용을 입력해주세요.");
-    
     const newItem = { title, words, sentences };
-    if(editingIndex === -1) { library.push(newItem); saveLib(); openStudy(library.length - 1); } 
-    else { library[editingIndex] = newItem; saveLib(); openStudy(editingIndex); }
+    if(editingIndex === -1) { library.push(newItem); openStudy(library.length - 1); } 
+    else { library[editingIndex] = newItem; openStudy(editingIndex); }
   }
-
   function parseText(text) {
     if(!text) return [];
     return text.split('\n').map(line => {
@@ -314,7 +259,6 @@
   }
 
   function openStudy(idx) { currentSet = library[idx]; document.getElementById('study-title').innerText = currentSet.title; showScreen('screen-study'); changeMode(1); }
-  
   function changeMode(mode) {
     currentMode = mode;
     [1,2,3,4].forEach(n => document.getElementById(`m${n}`).className = 'mode-btn' + (n===mode ? ' selected' : ''));
@@ -325,18 +269,10 @@
     }
     resetCurrentMode();
   }
-
-  function resetCurrentMode() {
-    currentIndex = 0; wrongList = [];
-    document.getElementById('result-box').style.display = 'none';
-    const isCard = (currentMode === 1 || currentMode === 3); 
-    document.getElementById('card-area').style.display = isCard ? 'block' : 'none';
-    document.getElementById('quiz-area').style.display = isCard ? 'none' : 'block';
-    showItem();
-  }
-
+  function resetCurrentMode() { currentIndex = 0; wrongList = []; document.getElementById('result-box').style.display = 'none'; const isCard = (currentMode === 1 || currentMode === 3); document.getElementById('card-area').style.display = isCard ? 'block' : 'none'; document.getElementById('quiz-area').style.display = isCard ? 'none' : 'block'; showItem(); }
   function shuffleCurrent() { studyList.sort(() => Math.random() - 0.5); resetCurrentMode(); }
 
+  // === 화면 표시 (발음 기능 수정됨) ===
   function showItem() {
     if(currentIndex >= studyList.length) { finishStudy(); return; }
     const item = studyList[currentIndex];
@@ -351,14 +287,11 @@
         const frontHtml = `<div class="card-text-main">${eng}</div><div class="card-text-sub">${kor}</div>`;
         const backHtml = `<div class="card-text-main">${item.a}</div>`;
         renderCardHtml(frontHtml, backHtml, false);
-    } else { // 퀴즈 모드
+    } else { // 퀴즈
         let displayQ = item.q;
         if(currentMode === 4) {
              let match = item.q.match(/\(([^)]+)\)/); 
-             if(match) {
-                 let eng = item.q.replace(match[0], "").trim();
-                 displayQ = `${eng}<br><span style="color:#ff6b6b; font-size:18px;">(${match[1]})</span>`;
-             }
+             if(match) { let eng = item.q.replace(match[0], "").trim(); displayQ = `${eng}<br><span style="color:#ff6b6b; font-size:18px;">(${match[1]})</span>`; }
         }
         document.getElementById('quiz-question').innerHTML = displayQ;
         document.getElementById('quiz-input').value = "";
@@ -383,63 +316,34 @@
     }, 200);
   }
 
-  function mark(isCorrect) {
-    if(!isCorrect) wrongList.push(studyList[currentIndex]);
-    currentIndex++;
-    showItem();
-  }
-
-  function checkAnswer() {
-    const user = document.getElementById('quiz-input').value.trim().toLowerCase();
-    const ans = studyList[currentIndex].a.toLowerCase();
-    const msg = document.getElementById('quiz-msg');
-    if(user === ans) { 
-        msg.innerHTML = "<span style='color:green'>정답! ⭕</span>"; 
-        playAudio(ans);
-    } else { 
-        msg.innerHTML = `<span style='color:red'>땡! 정답: ${ans}</span>`; 
-        wrongList.push(studyList[currentIndex]); 
-    }
-    document.getElementById('btn-check').style.display = 'none'; 
-    document.getElementById('btn-next').style.display = 'inline-block'; 
-    document.getElementById('btn-next').focus();
-  }
-  function nextItem() { currentIndex++; showItem(); }
-
-  function finishStudy() {
-    document.getElementById('card-area').style.display = 'none';
-    document.getElementById('quiz-area').style.display = 'none';
-    document.getElementById('result-box').style.display = 'block';
-    const msg = document.getElementById('result-msg');
-    const retryBtn = document.getElementById('btn-retry');
-    if(wrongList.length > 0) {
-        msg.innerText = `${wrongList.length}개를 틀렸어요. 다시 도전!`;
-        retryBtn.style.display = 'inline-block';
-        retryBtn.innerText = `🔥 틀린 ${wrongList.length}개 다시 하기`;
-    } else {
-        msg.innerText = "🎉 완벽해요! 100점!";
-        retryBtn.style.display = 'none';
-    }
-  }
-
-  function retryWrong() { studyList = [...wrongList]; resetCurrentMode(); }
-  function flipCard() { 
-    const card = document.getElementById('flashcard');
-    card.classList.toggle('is-flipped');
-    if(card.classList.contains('is-flipped')) playAudio(studyList[currentIndex].a);
-  }
+  // === 발음 재생 (수정됨) ===
   function playCurrentAudio(e) {
-    if(e) e.stopPropagation();
-    let textToPlay = studyList[currentIndex].a;
-    if(currentMode === 1) textToPlay = studyList[currentIndex].a; 
+    e.stopPropagation(); // 카드 뒤집히는 것 방지
+    // 현재 보고 있는 카드의 '정답(영어)'를 읽어줌
+    const textToPlay = studyList[currentIndex].a;
     playAudio(textToPlay);
   }
+
   function playAudio(text) { 
     if(!text) return;
     const url = `https://translate.google.com/translate_tts?ie=UTF-8&tl=en&client=tw-ob&q=${encodeURIComponent(text)}`;
     new Audio(url).play(); 
   }
-  
+
+  // O/X 및 퀴즈
+  function mark(isCorrect) { if(!isCorrect) wrongList.push(studyList[currentIndex]); currentIndex++; showItem(); }
+  function checkAnswer() {
+    const user = document.getElementById('quiz-input').value.trim().toLowerCase();
+    const ans = studyList[currentIndex].a.toLowerCase();
+    const msg = document.getElementById('quiz-msg');
+    if(user === ans) { msg.innerHTML = "<span style='color:green'>정답! ⭕</span>"; playAudio(ans); }
+    else { msg.innerHTML = `<span style='color:red'>땡! 정답: ${ans}</span>`; wrongList.push(studyList[currentIndex]); }
+    document.getElementById('btn-check').style.display = 'none'; document.getElementById('btn-next').style.display = 'inline-block'; document.getElementById('btn-next').focus();
+  }
+  function nextItem() { currentIndex++; showItem(); }
+  function finishStudy() { document.getElementById('card-area').style.display = 'none'; document.getElementById('quiz-area').style.display = 'none'; document.getElementById('result-box').style.display = 'block'; const msg = document.getElementById('result-msg'); const retryBtn = document.getElementById('btn-retry'); if(wrongList.length > 0) { msg.innerText = `${wrongList.length}개를 틀렸어요. 다시 도전!`; retryBtn.style.display = 'inline-block'; retryBtn.innerText = `🔥 틀린 ${wrongList.length}개 다시 하기`; } else { msg.innerText = "🎉 완벽해요! 100점!"; retryBtn.style.display = 'none'; } }
+  function retryWrong() { studyList = [...wrongList]; resetCurrentMode(); }
+  function flipCard() { const card = document.getElementById('flashcard'); card.classList.toggle('is-flipped'); }
   function showScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
   function showListScreen() { showScreen('screen-list'); init(); }
   window.onload = init;
