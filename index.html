@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>뽀둥이 단어장</title>
+<title>뽀둥이 단어장 (원어민 발음)</title>
 <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
 <style>
   body { font-family: 'Jua', sans-serif; background-color: #fff0f5; text-align: center; margin: 0; padding: 20px; color: #333; }
@@ -15,12 +15,17 @@
   .btn-danger { background: #ff6b6b; color: white; }
   .btn-secondary { background: #a8d8ea; color: white; }
   .btn-dark { background: #555; color: white; font-size: 14px; }
+  .btn-purple { background: #9b59b6; color: white; font-size: 14px; }
+  .btn-edit { background: #fce38a; color: #555; font-size: 14px; }
   .list-item { background: #fff5f8; border: 2px solid #ffc3c3; padding: 15px; margin-bottom: 10px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; text-align: left; }
   .list-info { cursor: pointer; flex-grow: 1; }
   .list-title { font-size: 20px; color: #ff6b6b; font-weight: bold; }
   .list-desc { font-size: 13px; color: #888; }
+  .btn-group { display: flex; gap: 5px; }
   input[type="text"], textarea { width: 90%; padding: 12px; border: 2px solid #ffc3c3; border-radius: 10px; font-size: 16px; margin-top: 5px; font-family: sans-serif; }
   textarea { height: 100px; }
+  .data-area { margin-top: 30px; border-top: 2px dashed #ddd; padding-top: 20px; }
+  #dataInput { display: none; margin-bottom: 10px; border: 2px solid #aa96da; }
   .menu-bar { margin-bottom: 20px; }
   .menu-row { display: flex; justify-content: center; gap: 10px; margin-bottom: 10px; }
   .mode-btn { flex: 1; padding: 12px; border-radius: 15px; border: 2px solid #ddd; cursor: pointer; font-family: 'Jua', sans-serif; font-size: 16px; background: #fff; color: #555; }
@@ -48,12 +53,24 @@
 </head>
 <body>
 
+  <!-- 서재 화면 -->
   <div id="screen-list" class="screen active">
     <h1>🐶 뽀둥이 단어장</h1>
     <div id="saved-list-container"></div>
-    <div style="margin-top:20px; color:#666; font-size:14px;">* 데이터 수정 시 자동 갱신 *</div>
+    <div style="margin-top:20px; color:#666; font-size:14px;">* 선생님이 내용을 수정하면 자동으로 바뀝니다 *</div>
+    
+    <div class="data-area">
+        <p style="font-size:14px; color:#666;">컴퓨터 ↔ 핸드폰 데이터 이동</p>
+        <button class="btn btn-purple" onclick="exportData()">📤 내보내기</button>
+        <button class="btn btn-purple" onclick="toggleImport()">📥 가져오기</button>
+        <div id="import-area" style="display:none; margin-top:10px;">
+            <textarea id="dataInput" style="display:block; height:60px;" placeholder="코드를 여기에 붙여넣으세요"></textarea>
+            <button class="btn btn-dark" onclick="importData()">확인 (덮어쓰기)</button>
+        </div>
+    </div>
   </div>
 
+  <!-- 입력 화면 -->
   <div id="screen-input" class="screen">
     <h2 id="input-title">✨ 내용 채우기</h2>
     <input type="text" id="listTitle" placeholder="제목">
@@ -67,6 +84,7 @@
     </div>
   </div>
 
+  <!-- 공부 화면 -->
   <div id="screen-study" class="screen">
     <div style="display:flex; justify-content:space-between; align-items:center;">
       <button class="btn btn-secondary" style="font-size:14px;" onclick="showListScreen()">🏠 서재로</button>
@@ -128,7 +146,7 @@
 
 <script>
   // ==========================================
-  // 👇 1. 데이터 저장소 (손흥민 삭제됨)
+  // 👇 1. 데이터 저장소
   // ==========================================
   const defaultData = [
     {
@@ -194,8 +212,7 @@
         {q:"see a doctor (너는 병원에 가야해) You should [ ______ ] [ ______ ] [ ______ ].", a:"see a doctor"},
         {q:"picked up (그녀는 책을 집었다) She [ ______ ] [ ______ ] a book.", a:"picked up"}
       ]
-    }
-, // 👈 이 쉼표(,)를 꼭 챙겨서 복사하세요! 앞 단어장과 이어주는 역할을 해요.
+    },
     {
       title: "Day 19 (0361~0380)",
       words: [
@@ -228,7 +245,6 @@
         {q:"be over (그 콘서트는 9시에 끝날 것이다) The concert will [ ______ ] [ ______ ] at nine.", a:"be over"}
       ]
     }
-    
   ];
 
   let library = defaultData; 
@@ -306,7 +322,7 @@
   function resetCurrentMode() { currentIndex = 0; wrongList = []; document.getElementById('result-box').style.display = 'none'; const isCard = (currentMode === 1 || currentMode === 3); document.getElementById('card-area').style.display = isCard ? 'block' : 'none'; document.getElementById('quiz-area').style.display = isCard ? 'none' : 'block'; showItem(); }
   function shuffleCurrent() { studyList.sort(() => Math.random() - 0.5); resetCurrentMode(); }
 
-  // === 화면 표시 (발음 기능 수정됨) ===
+  // === 화면 표시 (발음 소리 기능 FIX - 자연스러운 구글 발음) ===
   function showItem() {
     if(currentIndex >= studyList.length) { finishStudy(); return; }
     const item = studyList[currentIndex];
@@ -350,21 +366,34 @@
     }, 200);
   }
 
-  // === 발음 재생 (수정됨) ===
+  // === 발음 재생 (Google TTS 사용 + 백업) ===
   function playCurrentAudio(e) {
-    e.stopPropagation(); // 카드 뒤집히는 것 방지
-    // 현재 보고 있는 카드의 '정답(영어)'를 읽어줌
-    const textToPlay = studyList[currentIndex].a;
+    if(e) e.stopPropagation();
+    let textToPlay = studyList[currentIndex].a;
     playAudio(textToPlay);
   }
 
   function playAudio(text) { 
     if(!text) return;
-    const url = `https://translate.google.com/translate_tts?ie=UTF-8&tl=en&client=tw-ob&q=${encodeURIComponent(text)}`;
-    new Audio(url).play(); 
+    
+    // 1. Google TTS (자연스러운 발음) 시도
+    const googleUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=en&client=tw-ob&q=${encodeURIComponent(text)}`;
+    const audio = new Audio(googleUrl);
+    
+    // 재생 시도하고 에러나면 백업(브라우저 기본 발음) 사용
+    const playPromise = audio.play();
+    
+    if (playPromise !== undefined) {
+        playPromise.catch(error => {
+            console.log("Google TTS 실패, 기본 발음 사용");
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.9;
+            window.speechSynthesis.speak(utterance);
+        });
+    }
   }
 
-  // O/X 및 퀴즈
   function mark(isCorrect) { if(!isCorrect) wrongList.push(studyList[currentIndex]); currentIndex++; showItem(); }
   function checkAnswer() {
     const user = document.getElementById('quiz-input').value.trim().toLowerCase();
@@ -377,11 +406,26 @@
   function nextItem() { currentIndex++; showItem(); }
   function finishStudy() { document.getElementById('card-area').style.display = 'none'; document.getElementById('quiz-area').style.display = 'none'; document.getElementById('result-box').style.display = 'block'; const msg = document.getElementById('result-msg'); const retryBtn = document.getElementById('btn-retry'); if(wrongList.length > 0) { msg.innerText = `${wrongList.length}개를 틀렸어요. 다시 도전!`; retryBtn.style.display = 'inline-block'; retryBtn.innerText = `🔥 틀린 ${wrongList.length}개 다시 하기`; } else { msg.innerText = "🎉 완벽해요! 100점!"; retryBtn.style.display = 'none'; } }
   function retryWrong() { studyList = [...wrongList]; resetCurrentMode(); }
-  function flipCard() { const card = document.getElementById('flashcard'); card.classList.toggle('is-flipped'); }
+  function flipCard() { 
+    const card = document.getElementById('flashcard');
+    card.classList.toggle('is-flipped');
+    if(card.classList.contains('is-flipped')) playAudio(studyList[currentIndex].a);
+  }
+  function exportData() {
+    if(library.length === 0) { alert("데이터가 없습니다."); return; }
+    const dataStr = JSON.stringify(library);
+    navigator.clipboard.writeText(dataStr).then(() => { alert("복사 완료! 카톡으로 보내세요."); }).catch(() => prompt("코드 복사:", dataStr));
+  }
+  function toggleImport() { const el = document.getElementById('import-area'); el.style.display = (el.style.display==='none'?'block':'none'); }
+  function importData() {
+    try {
+        const data = JSON.parse(document.getElementById('dataInput').value.trim());
+        if(confirm("기존 데이터가 덮어씌워집니다.")) { library = data; renderLibrary(); alert("완료!"); }
+    } catch(e) { alert("코드가 잘못되었습니다."); }
+  }
   function showScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
   function showListScreen() { showScreen('screen-list'); init(); }
   window.onload = init;
 </script>
 </body>
 </html>
-
