@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>뽀둥이 단어장 (원어민 발음)</title>
+<title>뽀둥이 단어장</title>
 <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
 <style>
   body { font-family: 'Jua', sans-serif; background-color: #fff0f5; text-align: center; margin: 0; padding: 20px; color: #333; }
@@ -35,16 +35,30 @@
   .card { width: 100%; height: 100%; position: relative; transition: transform 0.6s; transform-style: preserve-3d; }
   .card.is-flipped { transform: rotateY(180deg); }
   .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border: 4px solid #ff9a9e; background: white; padding: 20px; box-sizing: border-box; }
-  .card-text-main { font-size: 32px; color: #333; word-break: keep-all; line-height: 1.4; font-weight: bold; }
-  .card-text-sub { font-size: 20px; color: #ff6b6b; background-color: #fff0f5; border-radius: 10px; padding: 10px; margin-top: 10px; font-weight: bold; display: block; width: 90%; box-shadow: inset 0 0 5px rgba(0,0,0,0.05); }
+  
+  /* 카드 텍스트 */
+  .card-text-main { font-size: 30px; color: #333; word-break: keep-all; line-height: 1.5; font-weight: bold; }
+  
+  /* 예문 해석 박스 */
+  .card-text-sub { font-size: 20px; color: #1565c0; background-color: #e3f2fd; border-radius: 10px; padding: 10px; margin-top: 10px; font-weight: bold; display: block; width: 90%; box-shadow: inset 0 0 5px rgba(0,0,0,0.05); }
+  
+  /* 뒷면 */
   .card-back { transform: rotateY(180deg); background-color: #ff9a9e; color: white; }
-  .card-back .card-text-main { color: white; font-size: 36px; }
+  .card-back .card-text-main { color: white; font-size: 32px; }
+  /* 뒷면 예문 해석 박스 (흰색 배경) */
+  .card-back .card-text-sub { background-color: rgba(255,255,255,0.2); color: #fff; border: 1px solid #fff; }
+
+  /* 퀴즈 */
   .quiz-q { font-size: 22px; margin: 20px 0; font-weight: bold; word-break: keep-all; line-height: 1.5; }
   .quiz-input { width: 70%; padding: 10px; font-size: 20px; border: 3px solid #ff6b6b; border-radius: 10px; text-align: center; }
   .quiz-msg { height: 30px; margin: 10px 0; font-size: 18px; font-weight: bold; }
   .result-box { display: none; background: #fff3e0; padding: 20px; border-radius: 15px; margin-top: 20px; border: 2px dashed #ff9800; }
-  .speak-btn { background: #f9f9f9; border: 2px solid #ddd; border-radius: 50%; width: 55px; height: 55px; cursor: pointer; font-size: 28px; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; z-index: 10; }
+  
+  /* 스피커 */
+  .speak-btn { background: #f9f9f9; border: 2px solid #ddd; border-radius: 50%; width: 55px; height: 55px; cursor: pointer; font-size: 28px; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; z-index: 10; color: #333; }
   .speak-btn:hover { transform: scale(1.1); background: #eee; }
+  .card-back .speak-btn { background: rgba(255,255,255,0.3); border-color: #fff; color: white; }
+
   .ox-btn { width: 70px; height: 70px; border-radius: 50%; font-size: 30px; border: none; cursor: pointer; margin: 0 10px; box-shadow: 0 4px 0 rgba(0,0,0,0.1); }
   .ox-btn:active { transform: translateY(4px); box-shadow: none; }
   .btn-o { background: #a8e6cf; color: #2e7d32; }
@@ -57,7 +71,7 @@
   <div id="screen-list" class="screen active">
     <h1>🐶 뽀둥이 단어장</h1>
     <div id="saved-list-container"></div>
-    <div style="margin-top:20px; color:#666; font-size:14px;">* 선생님이 내용을 수정하면 자동으로 바뀝니다 *</div>
+    <div style="margin-top:20px; color:#666; font-size:14px;">* 데이터 수정 시 자동 갱신 *</div>
     
     <div class="data-area">
         <p style="font-size:14px; color:#666;">컴퓨터 ↔ 핸드폰 데이터 이동</p>
@@ -114,7 +128,7 @@
                     <div class="card-face card-back">
                         <div id="card-back-content" style="width:100%;"></div> 
                         <!-- 뒷면 스피커 버튼 -->
-                        <div class="speak-btn" style="color:#333;" onclick="playCurrentAudio(event)">🔊</div>
+                        <div class="speak-btn" onclick="playCurrentAudio(event)">🔊</div>
                     </div>
                 </div>
             </div>
@@ -146,7 +160,7 @@
 
 <script>
   // ==========================================
-  // 👇 1. 데이터 저장소
+  // 👇 1. 데이터 저장소 (정답 모두 제거됨!)
   // ==========================================
   const defaultData = [
     {
@@ -159,26 +173,26 @@
         {q:"간식", a:"snack"}, {q:"한 쌍, 켤레", a:"pair"}, {q:"요즘", a:"these days"}, {q:"이해하다", a:"get it"}
       ],
       sentences: [
-        {q:"busy (나는 지금 매우 바쁘다) I am very [ ______ ] now.", a:"busy"},
-        {q:"early (그는 오늘 일찍 일어났다) He got up [ ______ ] today.", a:"early"},
-        {q:"food (우리는 음식이 좀 필요하다) We need some [ ______ ].", a:"food"},
-        {q:"almost (거의 12시다) It's [ ______ ] 12 o'clock.", a:"almost"},
-        {q:"bring (내일 네 숙제를 가져와라) Please [ ______ ] your homework tomorrow.", a:"bring"},
-        {q:"draw (원을 하나 그려라) [ ______ ] a circle.", a:"draw"},
-        {q:"cross (길을 건너지 마라) Don't [ ______ ] the street.", a:"cross"},
-        {q:"over (그 개는 담장을 넘어 점프했다) The dog jumped [ ______ ] the fence.", a:"over"},
-        {q:"sang (그들은 방과 후에 노래했다) They [ ______ ] after school.", a:"sang"},
-        {q:"doctor (의사는 물을 마시라고 했다) The [ ______ ] told me to drink water.", a:"doctor"},
-        {q:"special (특별 메뉴가 있나요?) Do you have a [ ______ ] menu?", a:"special"},
-        {q:"weak (할머니는 다리가 약하시다) My grandmother has [ ______ ] legs.", a:"weak"},
-        {q:"stairs (그는 계단을 올라갔다) He went up the [ ______ ].", a:"stairs"},
-        {q:"Which (어떤 것이 네 책이니?) [ ______ ] is your book?", a:"Which"},
-        {q:"road (도로에 차들이 많다) There are a lot of cars on the [ ______ ].", a:"road"},
-        {q:"kitchen (그녀는 부엌에서 요리중이다) She is cooking in the [ ______ ].", a:"kitchen"},
-        {q:"snack (나는 간식으로 초콜릿을 좋아한다) I like chocolate for a [ ______ ].", a:"snack"},
-        {q:"pair (그녀는 새 안경 하나를 샀다) She bought a new [ ______ ] of glasses.", a:"pair"},
-        {q:"these days (요즘 날씨가 좋다) The weather is nice [ ______ ] [ ______ ].", a:"these days"},
-        {q:"get it (저는 이해를 못하겠어요) I don't [ ______ ] [ ______ ].", a:"get it"}
+        {q:"(그녀는 일과 학업으로 바쁘다) She is [ ______ ] with work and study.", a:"busy"},
+        {q:"(나는 매일 일찍 일어난다) I get up [ ______ ] every day.", a:"early"},
+        {q:"(그는 한국 음식을 좋아한다) He likes Korean [ ______ ].", a:"food"},
+        {q:"(거의 4시가 다 되어간다) It's [ ______ ] four o'clock.", a:"almost"},
+        {q:"(제가 친구를 집에 데려와도 될까요?) Can I [ ______ ] a friend home?", a:"bring"},
+        {q:"(아들이 벽에 동물들을 그렸다) My son [ ______ ] animals on the wall.", a:"drew"},
+        {q:"(한 여자가 길을 건너고 있다) A woman is [ ______ ] the street.", a:"crossing"},
+        {q:"(산 위로 구름이 떠 있다) There are clouds [ ______ ] the mountain.", a:"over"},
+        {q:"(그들은 방과 후에 노래했다) They [ ______ ] after school.", a:"sang"},
+        {q:"(의사는 물을 마시라고 했다) The [ ______ ] told me to drink water.", a:"doctor"},
+        {q:"(특별 메뉴가 있나요?) Do you have a [ ______ ] menu?", a:"special"},
+        {q:"(할머니는 다리가 약하시다) My grandmother has [ ______ ] legs.", a:"weak"},
+        {q:"(그는 계단을 올라갔다) He went up the [ ______ ].", a:"stairs"},
+        {q:"(어떤 것이 네 책이니?) [ ______ ] is your book?", a:"Which"},
+        {q:"(도로에 차들이 많다) There are a lot of cars on the [ ______ ].", a:"road"},
+        {q:"(그녀는 부엌에서 요리중이다) She is cooking in the [ ______ ].", a:"kitchen"},
+        {q:"(나는 간식으로 초콜릿을 좋아한다) I like chocolate for a [ ______ ].", a:"snack"},
+        {q:"(그녀는 새 안경 하나를 샀다) She bought a new [ ______ ] of glasses.", a:"pair"},
+        {q:"(요즘 날씨가 좋다) The weather is nice [ ______ ] [ ______ ].", a:"these days"},
+        {q:"(저는 이해를 못하겠어요) I don't [ ______ ] [ ______ ].", a:"get it"}
       ]
     },
     {
@@ -191,26 +205,26 @@
         {q:"다리", a:"bridge"}, {q:"유용한", a:"useful"}, {q:"진찰받다", a:"see a doctor"}, {q:"집다, 태우다", a:"pick up"}
       ],
       sentences: [
-        {q:"bottle (이 병 좀 열어주시겠어요?) Would you open this [ ______ ]?", a:"bottle"},
-        {q:"clock (이 시계는 5분 빠르다) This [ ______ ] is five minutes fast.", a:"clock"},
-        {q:"dream (그는 악몽을 꾸었다) He had a bad [ ______ ].", a:"dream"},
-        {q:"complete (우리는 일을 완료해야 한다) We should [ ______ ] the work.", a:"complete"},
-        {q:"season (어떤 계절을 좋아하니?) Which [ ______ ] do you like?", a:"season"},
-        {q:"died (그 개는 작년에 죽었다) The dog [ ______ ] last year.", a:"died"},
-        {q:"store (가게에서 달걀을 사라) Buy eggs at the [ ______ ].", a:"store"},
-        {q:"off (그는 말에서 떨어졌다) He fell [ ______ ] the horse.", a:"off"},
-        {q:"sells (이 가게는 모자를 판다) This store [ ______ ] caps.", a:"sells"},
-        {q:"mouth (입을 벌려라) Open your [ ______ ].", a:"mouth"},
-        {q:"gloves (나는 장갑을 꼈다) I put on [ ______ ].", a:"gloves"},
-        {q:"dish (그녀는 접시를 샀다) She bought a [ ______ ].", a:"dish"},
-        {q:"heart (그는 심장이 약하다) He has a weak [ ______ ].", a:"heart"},
-        {q:"picture (나는 그림을 그리고 있다) I'm drawing a [ ______ ].", a:"picture"},
-        {q:"Leaves (나뭇잎들이 빨갛다) [ ______ ] are red.", a:"Leaves"},
-        {q:"hospital (병원에 아픈 아이들이 많다) Many sick children at the [ ______ ].", a:"hospital"},
-        {q:"bridge (나는 다리를 건넜다) I crossed the [ ______ ].", a:"bridge"},
-        {q:"useful (이 수업은 유용할 것이다) This class will be [ ______ ].", a:"useful"},
-        {q:"see a doctor (너는 병원에 가야해) You should [ ______ ] [ ______ ] [ ______ ].", a:"see a doctor"},
-        {q:"picked up (그녀는 책을 집었다) She [ ______ ] [ ______ ] a book.", a:"picked up"}
+        {q:"(이 병 좀 열어주시겠어요?) Would you open this [ ______ ]?", a:"bottle"},
+        {q:"(이 시계는 5분 빠르다) This [ ______ ] is five minutes fast.", a:"clock"},
+        {q:"(그는 악몽을 꾸었다) He had a bad [ ______ ].", a:"dream"},
+        {q:"(우리는 일을 완료해야 한다) We should [ ______ ] the work.", a:"complete"},
+        {q:"(어떤 계절을 좋아하니?) Which [ ______ ] do you like?", a:"season"},
+        {q:"(그 개는 작년에 죽었다) The dog [ ______ ] last year.", a:"died"},
+        {q:"(가게에서 달걀을 사라) Buy eggs at the [ ______ ].", a:"store"},
+        {q:"(그는 말에서 떨어졌다) He fell [ ______ ] the horse.", a:"off"},
+        {q:"(이 가게는 모자를 판다) This store [ ______ ] caps.", a:"sells"},
+        {q:"(입을 벌려라) Open your [ ______ ].", a:"mouth"},
+        {q:"(나는 장갑을 꼈다) I put on [ ______ ].", a:"gloves"},
+        {q:"(그녀는 접시를 샀다) She bought a [ ______ ].", a:"dish"},
+        {q:"(그는 심장이 약하다) He has a weak [ ______ ].", a:"heart"},
+        {q:"(나는 그림을 그리고 있다) I'm drawing a [ ______ ].", a:"picture"},
+        {q:"(나뭇잎들이 빨갛다) [ ______ ] are red.", a:"Leaves"},
+        {q:"(병원에 아픈 아이들이 많다) Many sick children at the [ ______ ].", a:"hospital"},
+        {q:"(나는 다리를 건넜다) I crossed the [ ______ ].", a:"bridge"},
+        {q:"(이 수업은 유용할 것이다) This class will be [ ______ ].", a:"useful"},
+        {q:"(너는 병원에 가야해) You should [ ______ ] [ ______ ] [ ______ ].", a:"see a doctor"},
+        {q:"(그녀는 책을 집었다) She [ ______ ] [ ______ ] a book.", a:"picked up"}
       ]
     },
     {
@@ -223,28 +237,28 @@
         {q:"채소, 야채", a:"vegetable"}, {q:"가르치다", a:"teach"}, {q:"설거지를 하다", a:"do the dishes"}, {q:"끝나다", a:"be over"}
       ],
       sentences: [
-        {q:"age (그는 70세의 나이로 죽었다) He died at the [ ______ ] of 70.", a:"age"},
-        {q:"baths (내 개는 목욕을 싫어한다) My dog hates [ ______ ].", a:"baths"},
-        {q:"cousin (저 소년은 내 사촌이다) That boy is my [ ______ ].", a:"cousin"},
-        {q:"enjoying (그녀는 음악을 즐기고 있다) She is [ ______ ] the music.", a:"enjoying"},
-        {q:"ask (제가 당신의 이름을 물어도 될까요?) May I [ ______ ] your name?", a:"ask"},
-        {q:"only (나는 단지 10분 늦었을 뿐이다) I was [ ______ ] ten minutes late.", a:"only"},
-        {q:"took (나는 내 가방을 방으로 가져갔다) I [ ______ ] my bag to my room.", a:"took"},
-        {q:"into (그녀는 병원 안으로 걸어 들어갔다) She walked [ ______ ] the hospital.", a:"into"},
-        {q:"bread (그들은 수프와 빵을 먹었다) They ate some [ ______ ] with soup.", a:"bread"},
-        {q:"Wash (저녁 식사 전에 손을 씻어라) [ ______ ] your hands before dinner.", a:"Wash"},
-        {q:"sure (우리는 그것에 대해 확신하지 못한다) We are not [ ______ ] about that.", a:"sure"},
-        {q:"shoes (양말과 신발을 신어라) Put on your socks and [ ______ ].", a:"shoes"},
-        {q:"wind (어제는 바람이 정말 강했다) The [ ______ ] was really strong yesterday.", a:"wind"},
-        {q:"cheap (그 야구 장갑은 싸다) The baseball glove is [ ______ ].", a:"cheap"},
-        {q:"loves (그녀는 그녀의 딸을 매우 사랑한다) She [ ______ ] her daughter very much.", a:"loves"},
-        {q:"husband (그는 제니의 남편이다) He is Jenny's [ ______ ].", a:"husband"},
-        {q:"vegetable (감자는 채소의 일종이다) Potatoes are a kind of [ ______ ].", a:"vegetable"},
-        {q:"teach (나는 한국 학생들에게 영어를 가르친다) I [ ______ ] English to Korean students.", a:"teach"},
-        {q:"does the dishes (아빠는 매일 설거지를 하신다) Dad [ ______ ] [ ______ ] [ ______ ] every day.", a:"does the dishes"},
-        {q:"be over (그 콘서트는 9시에 끝날 것이다) The concert will [ ______ ] [ ______ ] at nine.", a:"be over"}
-      ]      
-    }, 
+        {q:"(그는 70세의 나이로 죽었다) He died at the [ ______ ] of 70.", a:"age"},
+        {q:"(내 개는 목욕을 싫어한다) My dog hates [ ______ ].", a:"baths"},
+        {q:"(저 소년은 내 사촌이다) That boy is my [ ______ ].", a:"cousin"},
+        {q:"(그녀는 음악을 즐기고 있다) She is [ ______ ] the music.", a:"enjoying"},
+        {q:"(제가 당신의 이름을 물어도 될까요?) May I [ ______ ] your name?", a:"ask"},
+        {q:"(나는 단지 10분 늦었을 뿐이다) I was [ ______ ] ten minutes late.", a:"only"},
+        {q:"(나는 내 가방을 방으로 가져갔다) I [ ______ ] my bag to my room.", a:"took"},
+        {q:"(그녀는 병원 안으로 걸어 들어갔다) She walked [ ______ ] the hospital.", a:"into"},
+        {q:"(그들은 수프와 빵을 먹었다) They ate some [ ______ ] with soup.", a:"bread"},
+        {q:"(저녁 식사 전에 손을 씻어라) [ ______ ] your hands before dinner.", a:"Wash"},
+        {q:"(우리는 그것에 대해 확신하지 못한다) We are not [ ______ ] about that.", a:"sure"},
+        {q:"(양말과 신발을 신어라) Put on your socks and [ ______ ].", a:"shoes"},
+        {q:"(어제는 바람이 정말 강했다) The [ ______ ] was really strong yesterday.", a:"wind"},
+        {q:"(그 야구 장갑은 싸다) The baseball glove is [ ______ ].", a:"cheap"},
+        {q:"(그녀는 그녀의 딸을 매우 사랑한다) She [ ______ ] her daughter very much.", a:"loves"},
+        {q:"(그는 제니의 남편이다) He is Jenny's [ ______ ].", a:"husband"},
+        {q:"(감자는 채소의 일종이다) Potatoes are a kind of [ ______ ].", a:"vegetable"},
+        {q:"(나는 한국 학생들에게 영어를 가르친다) I [ ______ ] English to Korean students.", a:"teach"},
+        {q:"(아빠는 매일 설거지를 하신다) Dad [ ______ ] [ ______ ] [ ______ ] every day.", a:"does the dishes"},
+        {q:"(그 콘서트는 9시에 끝날 것이다) The concert will [ ______ ] [ ______ ] at nine.", a:"be over"}
+      ]
+    },
     {
       title: "Day 20 (0381~0400)",
       words: [
@@ -255,28 +269,28 @@
         {q:"소풍", a:"picnic"}, {q:"가게, 물건을 사다", a:"shop"}, {q:"분명히, 확실히", a:"for sure"}, {q:"구경시켜 주다", a:"show around"}
       ],
       sentences: [
-        {q:"art (음악은 예술의 일종이다) Music is a kind of [ ______ ].", a:"art"},
-        {q:"showed (그는 나에게 자신의 사진을 보여주었다) He [ ______ ] me his picture.", a:"showed"},
-        {q:"airplane (나는 비행기를 타고 중국에 갔다) I went to China by [ ______ ].", a:"airplane"},
-        {q:"become (그들은 7월에 부모가 될 것이다) They will [ ______ ] parents in July.", a:"become"},
-        {q:"boat (보트 한 척이 호수에 있었다) A [ ______ ] was on the lake.", a:"boat"},
-        {q:"question (나는 그 시험에 관해 질문이 있다) I have a [ ______ ] about the test.", a:"question"},
-        {q:"sent (나는 그에게 생일 카드를 보냈다) I [ ______ ] a birthday card to him.", a:"sent"},
-        {q:"inside (춥다! 안으로 들어가자) It's cold! Let's go [ ______ ].", a:"inside"},
-        {q:"jumped (그들은 물속으로 뛰어들었다) They [ ______ ] into the water.", a:"jumped"},
-        {q:"learned (그녀는 학교에서 중국어를 배웠다) She [ ______ ] Chinese at school.", a:"learned"},
-        {q:"true (그 이야기는 사실이 아니었다) The story was not [ ______ ].", a:"true"},
-        {q:"move (나는 손가락을 움직일 수가 없다) I can't [ ______ ] my finger. ", a:"move"},
-        {q:"dessert (나는 디저트로 애플파이를 먹었다) I had apple pie for [ ______ ].", a:"dessert"},
-        {q:"squares (빵을 정사각형으로 잘라라) Cut the bread into [ ______ ].", a:"squares"},
-        {q:"world (세계에는 많은 국가들이 있다) There are many countries in the [ ______ ].", a:"world"},
-        {q:"restaurant (우리는 프랑스 식당에서 점심을 먹었다) We had lunch at a French [ ______ ].", a:"restaurant"},
-        {q:"picnic (이번 주 토요일에 소풍을 가자) Let's go on a [ ______ ] this Saturday.", a:"picnic"},
-        {q:"shop (저쪽에 꽃 가게가 있다) There is a flower [ ______ ] over there.", a:"shop"},
-        {q:"for sure (우리는 그의 나이를 확실히 모른다) We don't know his age [ ______ ] [ ______ ].", a:"for sure"},
-        {q:"show around (내가 너에게 우리 마을을 구경시켜 줄게) I will [ ______ ] you [ ______ ] my town.", a:"show around"}
+        {q:"(음악은 예술의 일종이다) Music is a kind of [ ______ ].", a:"art"},
+        {q:"(그는 나에게 자신의 사진을 보여주었다) He [ ______ ] me his picture.", a:"showed"},
+        {q:"(나는 비행기를 타고 중국에 갔다) I went to China by [ ______ ].", a:"airplane"},
+        {q:"(그들은 7월에 부모가 될 것이다) They will [ ______ ] parents in July.", a:"become"},
+        {q:"(보트 한 척이 호수에 있었다) A [ ______ ] was on the lake.", a:"boat"},
+        {q:"(나는 그 시험에 관해 질문이 있다) I have a [ ______ ] about the test.", a:"question"},
+        {q:"(나는 그에게 생일 카드를 보냈다) I [ ______ ] a birthday card to him.", a:"sent"},
+        {q:"(춥다! 안으로 들어가자) It's cold! Let's go [ ______ ].", a:"inside"},
+        {q:"(그들은 물속으로 뛰어들었다) They [ ______ ] into the water.", a:"jumped"},
+        {q:"(그녀는 학교에서 중국어를 배웠다) She [ ______ ] Chinese at school.", a:"learned"},
+        {q:"(그 이야기는 사실이 아니었다) The story was not [ ______ ].", a:"true"},
+        {q:"(나는 손가락을 움직일 수가 없다) I can't [ ______ ] my finger. ", a:"move"},
+        {q:"(나는 디저트로 애플파이를 먹었다) I had apple pie for [ ______ ].", a:"dessert"},
+        {q:"(빵을 정사각형으로 잘라라) Cut the bread into [ ______ ].", a:"squares"},
+        {q:"(세계에는 많은 국가들이 있다) There are many countries in the [ ______ ].", a:"world"},
+        {q:"(우리는 프랑스 식당에서 점심을 먹었다) We had lunch at a French [ ______ ].", a:"restaurant"},
+        {q:"(이번 주 토요일에 소풍을 가자) Let's go on a [ ______ ] this Saturday.", a:"picnic"},
+        {q:"(저쪽에 꽃 가게가 있다) There is a flower [ ______ ] over there. ", a:"shop"},
+        {q:"(우리는 그의 나이를 확실히 모른다) We don't know his age [ ______ ] [ ______ ].", a:"for sure"},
+        {q:"(내가 너에게 우리 마을을 구경시켜 줄게) I will [ ______ ] you [ ______ ] my town.", a:"show around"}
       ]
-    }, 
+    },
     {
       title: "Day 21 (0401~0420)",
       words: [
@@ -287,29 +301,28 @@
         {q:"잠에서 깨다", a:"wake"}, {q:"~하게 하다, 허락하다", a:"let"}, {q:"이루어지다", a:"come true"}, {q:"한 사람씩", a:"one by one"}
       ],
       sentences: [
-        {q:"arrived (기차가 서울에 도착했다) The train [ ______ ] in Seoul at four.", a:"arrived"},
-        {q:"bathroom (욕실에서 세수를 해라) Wash your face in the [ ______ ].", a:"bathroom"},
-        {q:"case (필통에 연필 두 자루가 있다) There are two pens in the pencil [ ______ ].", a:"case"},
-        {q:"library (나는 도서관에서 자주 책을 읽는다) I often read books in the [ ______ ].", a:"library"},
-        {q:"online (그들은 매일 온라인 게임을 한다) They play [ ______ ] games every day.", a:"online"},
-        {q:"straight (그녀는 그에게 똑바로 걸어갔다) She walked [ ______ ] to him.", a:"straight"},
-        {q:"tried (그는 그 일을 완수하기 위해 노력했다) He [ ______ ] to complete the work.", a:"tried"},
-        {q:"near (병원은 매우 가깝다) The hospital is very [ ______ ].", a:"near"},
-        {q:"begins (그 영화는 7시에 시작한다) The movie [ ______ ] at seven.", a:"begins"},
-        {q:"finish (모든 수업은 오후 5시에 끝난다) All classes [ ______ ] at 5 p.m.", a:"finish"},
-        {q:"Both (두 소년들은 영어를 말할 수 있다) [ ______ ] the boys can speak English.", a:"Both"},
-        {q:"quick (버스를 타고 가는 것이 빠르다) It is [ ______ ] to go by bus.", a:"quick"},
-        {q:"rich (그 노부인은 매우 부유하다) The old lady is very [ ______ ].", a:"rich"},
-        {q:"standing (그는 문가에 서 있었다) He was [ ______ ] at the door.", a:"standing"},
-        {q:"sorry (어제 일은 내가 미안하다) I'm [ ______ ] about yesterday.", a:"sorry"},
-        {q:"lessons (나는 방과 후에 피아노 수업을 받는다) I take piano [ ______ ] after school.", a:"lessons"},
-        {q:"wake (그녀는 7시 30분에 일어난다) She [ ______ ] up at 7:30.", a:"wake"},
-        {q:"let (그는 내가 그의 펜을 쓰게 했다) He [ ______ ] me use his pen.", a:"let"},
-        {q:"come true (너의 꿈은 이루어질 것이다) Your dream will [ ______ ] [ ______ ].", a:"come true"},
-        {q:"one by one (그들은 한 사람씩 방으로 들어갔다) They entered the room [ ______ ] [ ______ ] [ ______ ].", a:"one by one"}
+        {q:"(기차가 서울에 도착했다) The train [ ______ ] in Seoul at four.", a:"arrived"},
+        {q:"(욕실에서 세수를 해라) Wash your face in the [ ______ ].", a:"bathroom"},
+        {q:"(필통에 연필 두 자루가 있다) There are two pens in the pencil [ ______ ].", a:"case"},
+        {q:"(나는 도서관에서 자주 책을 읽는다) I often read books in the [ ______ ].", a:"library"},
+        {q:"(그들은 매일 온라인 게임을 한다) They play [ ______ ] games every day.", a:"online"},
+        {q:"(그녀는 그에게 똑바로 걸어갔다) She walked [ ______ ] to him.", a:"straight"},
+        {q:"(그는 그 일을 완수하기 위해 노력했다) He [ ______ ] to complete the work.", a:"tried"},
+        {q:"(병원은 매우 가깝다) The hospital is very [ ______ ].", a:"near"},
+        {q:"(그 영화는 7시에 시작한다) The movie [ ______ ] at seven.", a:"begins"},
+        {q:"(모든 수업은 오후 5시에 끝난다) All classes [ ______ ] at 5 p.m.", a:"finish"},
+        {q:"(두 소년들은 영어를 말할 수 있다) [ ______ ] the boys can speak English.", a:"Both"},
+        {q:"(버스를 타고 가는 것이 빠르다) It is [ ______ ] to go by bus.", a:"quick"},
+        {q:"(그 노부인은 매우 부유하다) The old lady is very [ ______ ].", a:"rich"},
+        {q:"(그는 문가에 서 있었다) He was [ ______ ] at the door.", a:"standing"},
+        {q:"(어제 일은 내가 미안하다) I'm [ ______ ] about yesterday.", a:"sorry"},
+        {q:"(나는 방과 후에 피아노 수업을 받는다) I take piano [ ______ ] after school.", a:"lessons"},
+        {q:"(그녀는 7시 30분에 일어난다) She [ ______ ] up at 7:30.", a:"wake"},
+        {q:"(그는 내가 그의 펜을 쓰게 했다) He [ ______ ] me use his pen.", a:"let"},
+        {q:"(너의 꿈은 이루어질 것이다) Your dream will [ ______ ] [ ______ ].", a:"come true"},
+        {q:"(그들은 한 사람씩 방으로 들어갔다) They entered the room [ ______ ] [ ______ ] [ ______ ].", a:"one by one"}
       ]
-    }
-    ,
+    },
     {
       title: "Day 22 (0421~0440)",
       words: [
@@ -320,26 +333,26 @@
         {q:"잠에서 깨다", a:"wake"}, {q:"출입문, 탑승구", a:"gate"}, {q:"~을 입어보다", a:"try on"}, {q:"통화하다", a:"talk on the phone"}
       ],
       sentences: [
-        {q:"turn (왼쪽으로 돌아라) [ ______ ] left.", a:"turn"},
-        {q:"airport (비행기가 6시에 공항에 도착할 것이다) The plane will arrive at the [ ______ ] at six.", a:"airport"},
-        {q:"caught (나는 두 손으로 그 공을 잡았다) I [ ______ ] the ball with both hands.", a:"caught"},
-        {q:"pretty (내 여동생은 예쁘다) My sister is [ ______ ].", a:"pretty"},
-        {q:"breakfast (너는 아침 식사로 무엇을 먹고 싶니?) What do you want for [ ______ ]?", a:"breakfast"},
-        {q:"trip (부산 여행은 어땠니?) How was your [ ______ ] to Busan?", a:"trip"},
-        {q:"hill (그들은 언덕을 걸어 올라갔다) They walked up the [ ______ ].", a:"hill"},
-        {q:"As (나는 저녁을 준비할 때 TV를 보았다) He watched TV [ ______ ] I cooked dinner.", a:"as"},
-        {q:"begins (그 영화는 7시에 시작한다) The movie [ ______ ] at seven.", a:"begins"},
-        {q:"finish (모든 수업은 오후 5시에 끝난다) All classes [ ______ ] at 5 p.m.", a:"finish"},
-        {q:"Both (두 소년들은 영어를 말할 수 있다) [ ______ ] the boys can speak English.", a:"Both"},
-        {q:"quick (버스를 타고 가는 것이 빠르다) It is [ ______ ] to go by bus.", a:"quick"},
-        {q:"rich (그 노부인은 매우 부유하다) The old lady is very [ ______ ].", a:"rich"},
-        {q:"standing (그는 문가에 서 있었다) He was [ ______ ] at the door.", a:"standing"},
-        {q:"sorry (어제 일은 내가 미안하다) I'm [ ______ ] about yesterday.", a:"sorry"},
-        {q:"lessons (나는 방과 후에 피아노 수업을 받는다) I take piano [ ______ ] after school.", a:"lessons"},
-        {q:"wake (그녀는 7시 30분에 일어난다) She [ ______ ] up at 7:30.", a:"wake"},
-        {q:"Gate (우리는 20번 탑승구에서 비행기에 탑승했다) We boarded the plane at [ ______ ] 20.", a:"Gate"},
-        {q:"try on (제가 이 치마를 입어봐도 될까요?) Can I [ ______ ] [ ______ ] this skirt?", a:"try on"},
-        {q:"talking on the phone (그녀는 지금 통화 중이다) She is [ ______ ] [ ______ ] [ ______ ] [ ______ ] now.", a:"talking on the phone"}
+        {q:"(왼쪽으로 돌아라) [ ______ ] left.", a:"Turn"},
+        {q:"(비행기가 6시에 공항에 도착할 것이다) The plane will arrive at the [ ______ ] at six.", a:"airport"},
+        {q:"(나는 두 손으로 그 공을 잡았다) I [ ______ ] the ball with both hands.", a:"caught"},
+        {q:"(내 여동생은 예쁘다) My sister is [ ______ ].", a:"pretty"},
+        {q:"(너는 아침 식사로 무엇을 먹고 싶니?) What do you want for [ ______ ]?", a:"breakfast"},
+        {q:"(부산 여행은 어땠니?) How was your [ ______ ] to Busan?", a:"trip"},
+        {q:"(그들은 언덕을 걸어 올라갔다) They walked up the [ ______ ].", a:"hill"},
+        {q:"(나는 저녁을 준비할 때 TV를 보았다) He watched TV [ ______ ] I cooked dinner.", a:"as"},
+        {q:"(그 영화는 7시에 시작한다) The movie [ ______ ] at seven.", a:"begins"},
+        {q:"(모든 수업은 오후 5시에 끝난다) All classes [ ______ ] at 5 p.m.", a:"finish"},
+        {q:"(두 소년들은 영어를 말할 수 있다) [ ______ ] the boys can speak English.", a:"Both"},
+        {q:"(버스를 타고 가는 것이 빠르다) It is [ ______ ] to go by bus.", a:"quick"},
+        {q:"(그 노부인은 매우 부유하다) The old lady is very [ ______ ].", a:"rich"},
+        {q:"(그는 문가에 서 있었다) He was [ ______ ] at the door.", a:"standing"},
+        {q:"(어제 일은 내가 미안하다) I'm [ ______ ] about yesterday.", a:"sorry"},
+        {q:"(나는 방과 후에 피아노 수업을 받는다) I take piano [ ______ ] after school.", a:"lessons"},
+        {q:"(그녀는 7시 30분에 일어난다) She [ ______ ] up at 7:30.", a:"wakes"},
+        {q:"(우리는 20번 탑승구에서 비행기에 탑승했다) We boarded the plane at [ ______ ] 20.", a:"Gate"},
+        {q:"(제가 이 치마를 입어봐도 될까요?) Can I [ ______ ] [ ______ ] this skirt?", a:"try on"},
+        {q:"(그녀는 지금 통화 중이다) She is [ ______ ] [ ______ ] [ ______ ] [ ______ ] now.", a:"talking on the phone"}
       ]
     }
   ];
@@ -419,7 +432,7 @@
   function resetCurrentMode() { currentIndex = 0; wrongList = []; document.getElementById('result-box').style.display = 'none'; const isCard = (currentMode === 1 || currentMode === 3); document.getElementById('card-area').style.display = isCard ? 'block' : 'none'; document.getElementById('quiz-area').style.display = isCard ? 'none' : 'block'; showItem(); }
   function shuffleCurrent() { studyList.sort(() => Math.random() - 0.5); resetCurrentMode(); }
 
-  // === 화면 표시 (발음 소리 기능 FIX - 자연스러운 구글 발음) ===
+  // === 화면 표시 (예문 카드 뒤집으면 빨간 정답 쏙!) ===
   function showItem() {
     if(currentIndex >= studyList.length) { finishStudy(); return; }
     const item = studyList[currentIndex];
@@ -428,12 +441,88 @@
     if(currentMode === 1) { // 단어 카드
         renderCard(item.a, item.q, true); 
     } else if(currentMode === 3) { // 예문 카드
+        // 앞면: 영어 문장 + 한글 해석 (파란색)
         let match = item.q.match(/\(([^)]+)\)/); 
         let kor = ""; let eng = item.q;
         if(match) { kor = match[1]; eng = item.q.replace(match[0], "").trim(); }
+        
+        // 뒷면: 빈칸이 채워진 문장 (빨간색 정답)
+        // [ _____ ] 부분을 [ 정답 ] 형태로 치환 (빨간색 태그 포함)
+        let filledSentence = eng.replace(/\[\s*______\s*\]/, `[ <span style='color:red'>${item.a}</span> ]`);
+        // 정답이 2개 이상인 빈칸 (예: [ ___ ] [ ___ ]) 처리
+        // 단순하게 하려면 모든 빈칸을 정답으로 채워야 하지만, 여기선 a가 통째로 정답이므로
+        // 첫 번째 빈칸을 정답으로 바꾸거나, 아니면 그냥 정답 단어만 보여주는 게 아니라 문장 전체를 보여주는 게 목표
+        
+        // *중요*: 예문 데이터 a에 "turn"이라고 되어있고 q에 "[ ____ ]"가 있는데
+        // 어떤 문제는 빈칸이 두 개일 수도 있음.
+        // 가장 간단하고 확실한 방법: 뒷면에는 "문장 전체(빈칸 채워진)"를 보여주는 것.
+        // 여기서는 코드로 자동 치환이 어려우니 (빈칸 개수 등), 
+        // 1. 앞면: eng (빈칸 포함)
+        // 2. 뒷면: eng에서 [ ___ ]를 [ item.a(빨강) ] 로 교체.
+        // (단, 빈칸이 여러개면 item.a도 여러 단어여야 함. 현재 데이터 구조상 a는 정답 텍스트 전체임)
+        // 예를 들어 a="try on", q="... [ ___ ] [ ___ ] ..." 이면
+        // 단순 치환은 어려움.
+        
+        // 그래서 "뒷면"에는 그냥 [ 정답 ] 이렇게 보여주는 대신
+        // 원래 문장의 빈칸 부분에 색깔을 넣어서 보여주는 로직이 필요함.
+        // 하지만 빈칸 개수가 다를 수 있으니, 
+        // 뒷면에는 "완성된 문장"을 보여주는 게 좋지만 데이터에 완성된 문장이 없음.
+        
+        // 대안: 뒷면에는 "정답: 빨간색" + "한글 뜻"을 보여줌. 
+        // 혹은 빈칸이 포함된 문장에서 빈칸을 정답으로 교체 시도.
+        
+        // 여기서는 가장 깔끔하게:
+        // 앞면: 문장(빈칸) + 한글
+        // 뒷면: 문장(빈칸에 빨간색 정답 채움) + 한글
+        
+        // 정답(a)을 가지고 빈칸(______)을 교체하는 로직
+        // 빈칸이 여러 개일 경우 ([ ____ ] [ ____ ]) -> 정답이 "try on"이면
+        // 첫 번째 [ ____ ]를 try, 두 번째를 on으로? 이건 복잡함.
+        
+        // 가장 현실적인 해결책:
+        // 뒷면에는 item.a (정답)를 빨간색으로 크게 보여주고, 
+        // 그 아래에 한글 뜻을 보여주는 게 명확함.
+        // (문장 속에 넣으려면 문장 구조를 분석해야 함)
+        
+        // 요청하신 "문장 속에 빨간색으로 쏙 들어간 모습"을 구현하려면:
+        // 정답 텍스트를 빈칸 대신 넣어야 함.
+        // 현재 데이터 a는 "turn"이고 q는 "[ ____ ]"임.
+        // 단순히 replace("[ ______ ]", item.a) 하면 됨.
+        // 빈칸이 여러 개인 경우 (try on), a가 "try on"이니까 "[ try on ] [ ____ ]" 이렇게 될 수도 있음.
+        // -> 이 부분은 복잡하니, "뒷면엔 정답 단어를 빨간색으로 크게 보여줌"으로 타협하거나
+        // -> 정답 단어 a를 가지고 빈칸을 채우는 정규식 사용.
+        
+        let backEng = eng;
+        // 빈칸 패턴: [ ______ ] 또는 [______]
+        const blankRegex = /\[\s*______\s*\]/g;
+        
+        // 정답이 여러 단어(공백 포함)인 경우, 빈칸 개수만큼 쪼개서 넣기?
+        // 예: a="try on", q="[ __ ] [ __ ]" -> split a by space -> try, on -> replace sequentially.
+        const answerParts = item.a.split(' ');
+        let partIndex = 0;
+        
+        // 빈칸을 하나씩 찾아서 정답 단어로 교체 (빨간색 태그 입혀서)
+        backEng = backEng.replace(blankRegex, (match) => {
+            if (partIndex < answerParts.length) {
+                const word = answerParts[partIndex++];
+                return `[ <span style='color:red'>${word}</span> ]`;
+            }
+            return match; // 정답 단어가 모자르면 빈칸 유지
+        });
+        
+        // 만약 정답 단어 수가 빈칸보다 적거나 많으면? 
+        // 그냥 통째로 a를 넣는 게 나을 수도 있음. (예: a="talking on the phone")
+        // 위 로직은 단어 개수와 빈칸 개수가 맞아야 예쁨.
+        // 일단 위 로직(쪼개서 넣기)을 적용해보고, 안 맞으면 통째로 넣기.
+        
+        // 예외 처리: 정답이 한 덩어리인데 빈칸은 여러개일 때 (없기를 바라며)
+        // 혹은 정답이 문장형일 때.
+        
         const frontHtml = `<div class="card-text-main">${eng}</div><div class="card-text-sub">${kor}</div>`;
-        const backHtml = `<div class="card-text-main">${item.a}</div>`;
+        const backHtml = `<div class="card-text-main">${backEng}</div><div class="card-text-sub">${kor}</div>`;
+        
         renderCardHtml(frontHtml, backHtml, false);
+
     } else { // 퀴즈
         let displayQ = item.q;
         if(currentMode === 4) {
@@ -463,7 +552,6 @@
     }, 200);
   }
 
-  // === 발음 재생 (Google TTS 사용 + 백업) ===
   function playCurrentAudio(e) {
     if(e) e.stopPropagation();
     let textToPlay = studyList[currentIndex].a;
@@ -472,23 +560,8 @@
 
   function playAudio(text) { 
     if(!text) return;
-    
-    // 1. Google TTS (자연스러운 발음) 시도
-    const googleUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=en&client=tw-ob&q=${encodeURIComponent(text)}`;
-    const audio = new Audio(googleUrl);
-    
-    // 재생 시도하고 에러나면 백업(브라우저 기본 발음) 사용
-    const playPromise = audio.play();
-    
-    if (playPromise !== undefined) {
-        playPromise.catch(error => {
-            console.log("Google TTS 실패, 기본 발음 사용");
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'en-US';
-            utterance.rate = 0.9;
-            window.speechSynthesis.speak(utterance);
-        });
-    }
+    const url = `https://translate.google.com/translate_tts?ie=UTF-8&tl=en&client=tw-ob&q=${encodeURIComponent(text)}`;
+    new Audio(url).play(); 
   }
 
   function mark(isCorrect) { if(!isCorrect) wrongList.push(studyList[currentIndex]); currentIndex++; showItem(); }
@@ -526,5 +599,3 @@
 </script>
 </body>
 </html>
-
-
